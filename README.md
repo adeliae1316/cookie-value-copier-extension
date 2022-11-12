@@ -1,0 +1,2 @@
+# Cookie value copier extension
+
