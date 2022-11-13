@@ -1,0 +1,17 @@
+{
+  "name": "Cookie value copier",
+  "version": "0.1.0",
+  "manifest_version": 3,
+  "description": "Copy specified cookie value to clipboard.",
+  "action": {},
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "permissions": [
+    "activeTab",
+    "cookies"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
