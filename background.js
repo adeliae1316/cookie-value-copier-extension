@@ -45,5 +45,7 @@ chrome.runtime.onMessage.addListener(
           sendResponse({ cookieValue: result });
         });
     }
+
+    return true;
   }
 );
