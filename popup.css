@@ -1,0 +1,61 @@
+body {
+  width: 480px;
+  height: 320px;
+  margin: 20px;
+
+  background-color: white;
+}
+
+thead {
+  /* For fixed header. */
+  position: sticky;
+  top: 0;
+
+  background-color: white;
+}
+
+#tableArea {
+  width: 480px;
+  height: 190px;
+  overflow: scroll;
+}
+
+#addButtonArea {
+  width: 480px;
+}
+
+#addButton {
+  width: 480px;
+  height: 32px;
+
+  /* For vertical align. */
+  padding-top: 0;
+  padding-bottom: 0;
+  /* For fixed bottom. */
+  position: fixed;
+  bottom: 0;
+}
+
+#articleForAdd {
+  width: 480px;
+  height: 320px;
+}
+
+.myModalButton {
+  height: 32px;
+
+  /* For vertical align. */
+  vertical-align: middle;
+  padding-top: 2px;
+  padding-bottom: 0;
+}
+
+.myCopyButton {
+  height: 32px;
+  margin: auto;
+
+  /* For vertical align. */
+  vertical-align: middle;
+  padding-top: 2px;
+  padding-bottom: 0;
+}

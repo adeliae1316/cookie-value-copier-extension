@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Cookie value copier</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <meta name='keywords' content='cookie'>
+  <meta name='description' content='Copy specified cookie value to clipboard.'>
+  <meta name='author' content='adeliae1316'>
+  <!-- stylesheet -->
+  <link rel='stylesheet' href='https://unpkg.com/@picocss/pico@latest/css/pico.min.css'>
+  <link rel='stylesheet' href='./popup.css'>
+  <!-- javascript -->
+  <script src='./popup.js'></script>
+</head>
+
+<body>
+
+  <h1>Cookie value copier</h1>
+
+  <div id='tableArea'></div>
+
+  <div id='addButtonArea'>
+    <button id='addButton'>Add item</button>
+  </div>
+
+  <dialog id='dialogForAdd'>
+    <article id='articleForAdd'>
+      <!-- <h3>Add target cookie</h3> -->
+      <form>
+        <label for="cookieKey">Cookie key</label>
+        <input type="text" id="cookieKey" name="cookieKey" placeholder="Cookie key" required>
+
+        <label for="cookieUrl">URL</label>
+        <input type="url" id="cookieUrl" name="cookieUrl" placeholder="URL" required>
+      </form>
+      <footer>
+        <a href="#cancel" role="button" class="secondary myModalButton" id='cancelButton'>Cancel</a>
+        <a href="#confirm" role="button" class="myModalButton" id='confirmButton'>Confirm</a>
+      </footer>
+    </article>
+  </dialog>
+
+</body>
+
+</html>

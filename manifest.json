@@ -3,13 +3,17 @@
   "version": "0.1.0",
   "manifest_version": 3,
   "description": "Copy specified cookie value to clipboard.",
-  "action": {},
+  "action": {
+    "default_popup": "popup.html"
+  },
   "host_permissions": [
     "<all_urls>"
   ],
   "permissions": [
     "activeTab",
-    "cookies"
+    "cookies",
+    "storage",
+    "clipboardWrite"
   ],
   "background": {
     "service_worker": "background.js"

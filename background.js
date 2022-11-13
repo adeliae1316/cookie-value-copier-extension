@@ -2,8 +2,7 @@
  * Get cookie value.
  * @param {string} key Cookie key.
  * @param {string} url Url.
- * 
- * @return Cookie value.
+ * @returns Cookie value.
  * 
  */
 const getCookieValue = async (key, url) => {
@@ -33,13 +32,18 @@ const getCookieValue = async (key, url) => {
   return value;
 };
 
-const key = 'tz';
-
 /**
- * Action on icon click.
+ * Message.
  * 
  */
-chrome.action.onClicked.addListener(async (tab) => {
-  const value = await getCookieValue(key, tab.url);
-  console.trace(value);
-});
+chrome.runtime.onMessage.addListener(
+  (message, sender, sendResponse) => {
+    const operation = message.operation;
+    if (operation === 'getCookieValue') {
+      getCookieValue(message.cookieKey, message.cookieUrl)
+        .then(result => {
+          sendResponse({ cookieValue: result });
+        });
+    }
+  }
+);
