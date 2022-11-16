@@ -46,19 +46,35 @@ const clearConfig = async () => {
 };
 
 /**
- * Updatw the config table.
+ * Get cookie value.
+ * @param {*} key 
+ * @param {*} url 
+ * @returns Cookie value.
+ */
+const getCookieValue = async (key, url) => {
+  const response = await chrome.runtime.sendMessage({
+    operation: 'getCookieValue',
+    cookieKey: key,
+    cookieUrl: url
+  });
+
+  return response ? response.cookieValue : '';
+};
+
+/**
+ * Update the config table.
  * 
  */
 const updateConfigMap = async () => {
-  await chrome.storage.sync.get([ROOT])
-    .then(ret => {
-      if (ROOT in ret) {
-        for (const key in ret[ROOT]) {
-          // console.trace(`${key}: ${ret[ROOT][key]}`);
-          configMap[key] = ret[ROOT][key];
-        }
-      }
-    });
+  const ret = await chrome.storage.sync.get([ROOT]);
+  if (ROOT in ret) {
+    for (const key in ret[ROOT]) {
+      // Update value.
+      const cookieValue = await getCookieValue(key, ret[ROOT][key].url);
+      const item = { key: key, value: cookieValue, url: ret[ROOT][key].url };
+      await setConfig(key, item);
+    }
+  }
 };
 
 // Functions to create view.
@@ -98,8 +114,8 @@ const createTableItem = (item) => {
     try {
       navigator.clipboard.writeText(value)
         .then(() => {
-          // console.trace(`Copy value of ${key} to clipboard: ${value}`);
-          alert(`Copy value of ${key} to clipboard: ${value}`);
+          // console.trace(`Copy value of ${ key } to clipboard: ${ value } `);
+          alert(`Copy value of ${key} to clipboard: ${value} `);
         });
     } catch (e) {
       console.error('Failed to copy: ', e.message);
