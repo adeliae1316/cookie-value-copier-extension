@@ -124,7 +124,7 @@ const createTableItem = (item) => {
       // Close tab.
       await chrome.tabs.remove(tab.id);
       copyButton.innerText = 'Copied'
-      setTimeout(() => { copyButton.innerText = 'Copy value' }, 3000 /* ms */);
+      setTimeout(() => { copyButton.innerText = 'Copy value' }, 2000 /* ms */);
     } catch (e) {
       console.error('Failed to copy: ', e.message);
     }
