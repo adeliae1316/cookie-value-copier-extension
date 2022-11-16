@@ -71,7 +71,10 @@ const updateConfigMap = async () => {
     for (const key in ret[ROOT]) {
       // Update value.
       const cookieValue = await getCookieValue(key, ret[ROOT][key].url);
-      const item = { key: key, value: cookieValue, url: ret[ROOT][key].url };
+      const item = {
+        key: key, value: cookieValue,
+        url: ret[ROOT][key].url, favIconUrl: ret[ROOT][key].favIconUrl
+      };
       await setConfig(key, item);
     }
   }
@@ -88,16 +91,12 @@ const createTableItem = (item) => {
   const tr = document.createElement('tr');
   const tdFavicon = document.createElement('td');
   {
-    chrome.tabs.query({ url: item.url }, tabs => {
-      const img = document.createElement('img');
-      img.src = tabs[0].favIconUrl;
-      const anchr = document.createElement('a');
-      anchr.href = tabs[0].url;
-      // anchr.dataset.tooltip = tabs[0].url;
-      // anchr.classList.add('myAnchrToolTip');
-      anchr.appendChild(img);
-      tdFavicon.appendChild(anchr);
-    });
+    const img = document.createElement('img');
+    img.src = item.favIconUrl;
+    const anchr = document.createElement('a');
+    anchr.href = item.url;
+    anchr.appendChild(img);
+    tdFavicon.appendChild(anchr);
   }
   tr.appendChild(tdFavicon);
   const tdTitle = document.createElement('td');
@@ -108,15 +107,24 @@ const createTableItem = (item) => {
   copyButton.innerText = 'Copy value';
   copyButton.classList.add('myCopyButton');
   tdButton.appendChild(copyButton);
-  copyButton.addEventListener('click', () => {
+  copyButton.addEventListener('click', async () => {
     const key = item.key;
-    const value = item.value;
+    const url = item.url;
+    const favIconUrl = item.favIconUrl;
+
     try {
-      navigator.clipboard.writeText(value)
-        .then(() => {
-          // console.trace(`Copy value of ${ key } to clipboard: ${ value } `);
-          alert(`Copy value of ${key} to clipboard: ${value} `);
-        });
+      // Open target tab in background to update cookie.
+      const tab = await chrome.tabs.create({ url: url, active: false });
+      // Update value.
+      const cookieValue = await getCookieValue(key, url);
+      const item = { key: key, value: cookieValue, url: url, favIconUrl: favIconUrl };
+      await setConfig(key, item);
+      // Set clipboatd.
+      await navigator.clipboard.writeText(cookieValue);
+      // Close tab.
+      await chrome.tabs.remove(tab.id);
+      copyButton.innerText = 'Copied'
+      setTimeout(() => { copyButton.innerText = 'Copy value' }, 3000 /* ms */);
     } catch (e) {
       console.error('Failed to copy: ', e.message);
     }
@@ -188,24 +196,27 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // For init confirmButton.
   const confirmButton = document.getElementById('confirmButton');
-  if (confirmButton) confirmButton.addEventListener('click', () => {
+  if (confirmButton) confirmButton.addEventListener('click', async () => {
     const cookieKey = document.getElementById('cookieKey');
     const cookieUrl = document.getElementById('cookieUrl');
 
-    chrome.runtime.sendMessage({
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const response = await chrome.runtime.sendMessage({
       operation: 'getCookieValue',
       cookieKey: cookieKey.value,
       cookieUrl: cookieUrl.value
-    }, (response) => {
-      cookieValue = response.cookieValue;
-      if (cookieValue) {
-        const item = { key: cookieKey.value, value: cookieValue, url: cookieUrl.value };
-        setConfig(cookieKey.value, item);
-        tableItems.appendChild(createTableItem(item));
-        const dialogForAdd = document.getElementById('dialogForAdd');
-        dialogForAdd.removeAttribute('open');
-      }
     });
+
+    if (response && response.cookieValue) {
+      const item = {
+        key: cookieKey.value, value: response.cookieValue,
+        url: cookieUrl.value, favIconUrl: tabs[0].favIconUrl
+      };
+      await setConfig(cookieKey.value, item);
+      tableItems.appendChild(createTableItem(item));
+      const dialogForAdd = document.getElementById('dialogForAdd');
+      dialogForAdd.removeAttribute('open');
+    }
   });
 
   // For init dialog.
