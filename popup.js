@@ -183,8 +183,9 @@ window.addEventListener('DOMContentLoaded', () => {
     }, (response) => {
       cookieValue = response.cookieValue;
       if (cookieValue) {
-        setConfig(cookieKey.value, { key: cookieKey.value, value: cookieValue, url: cookieUrl.value });
-        tableItems.appendChild(createTableItem(cookieKey.value));
+        const item = { key: cookieKey.value, value: cookieValue, url: cookieUrl.value };
+        setConfig(cookieKey.value, item);
+        tableItems.appendChild(createTableItem(item));
         const dialogForAdd = document.getElementById('dialogForAdd');
         dialogForAdd.removeAttribute('open');
       }
