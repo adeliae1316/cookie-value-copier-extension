@@ -31,11 +31,11 @@ const getCookieValue = async (key, url) => {
  * 
  */
 chrome.runtime.onMessage.addListener(
-  async (message, sender, sendResponse) => {
+  (message, sender, sendResponse) => {
     const operation = message.operation;
     if (operation === 'getCookieValue') {
-      const result = await getCookieValue(message.cookieKey, message.cookieUrl)
-      sendResponse({ cookieValue: result });
+      getCookieValue(message.cookieKey, message.cookieUrl)
+        .then(result => { sendResponse({ cookieValue: result }) });
     }
 
     return true;
